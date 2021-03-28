@@ -16,7 +16,7 @@ class GraphQLConfiguration with ChangeNotifier {
     token = id;
   }
 
-  getOrgUrl() async {
+  Future<String> getOrgUrl() async {
     final url = await _pref.getOrgUrl();
     orgURI = url;
     httpLink = HttpLink(
@@ -25,7 +25,7 @@ class GraphQLConfiguration with ChangeNotifier {
     final imgUrl = await _pref.getOrgImgUrl();
     displayImgRoute = imgUrl;
     notifyListeners();
-    print(orgURI);
+    return url;
   }
 
   static HttpLink httpLink = HttpLink(
