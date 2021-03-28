@@ -16,7 +16,7 @@ import 'package:talawa/services/preferences.dart';
 import 'package:talawa/model/token.dart';
 import 'package:talawa/views/pages/organization/join_organization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:graphql/utilities.dart' show multipartFileFrom;
+// import 'package:graphql/utilities.dart' show multipartFileFrom;
 
 //pubspec packages are called here
 import 'package:file_picker/file_picker.dart';
@@ -62,7 +62,8 @@ class RegisterFormState extends State<RegisterForm> {
   //function for registering user which gets called when sign up is press
   registerUser() async {
     GraphQLClient _client = graphQLConfiguration.clientToQuery();
-    final img = await multipartFileFrom(_image);
+    // final img = await multipartFileFrom(_image);
+    final img = null;
     print(_image);
     QueryResult result = await _client.mutate(MutationOptions(
       documentNode: gql(_signupQuery.registerUser(
@@ -76,7 +77,7 @@ class RegisterFormState extends State<RegisterForm> {
       setState(() {
         _progressBarState = false;
       });
-      _exceptionToast(result.hasException.toString().substring(16,35));
+      _exceptionToast(result.hasException.toString().substring(16, 35));
     } else if (!result.hasException && !result.loading) {
       setState(() {
         _progressBarState = true;
@@ -115,7 +116,7 @@ class RegisterFormState extends State<RegisterForm> {
       setState(() {
         _progressBarState = false;
       });
-      _exceptionToast(result.exception.toString().substring(16,35));
+      _exceptionToast(result.exception.toString().substring(16, 35));
     } else if (!result.hasException && !result.loading) {
       setState(() {
         _progressBarState = true;
@@ -327,7 +328,6 @@ class RegisterFormState extends State<RegisterForm> {
                             setState(() {});
                           },
                           controller: originalPassword),
-
                       SizedBox(
                         height: 20,
                       ),

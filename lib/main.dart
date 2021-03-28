@@ -1,6 +1,8 @@
 //Flutter Packages are imported here
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hive/hive.dart';
 
 //Pages are imported here
 import 'package:provider/provider.dart';
@@ -19,9 +21,15 @@ import 'views/pages/organization/switch_org_page.dart';
 Preferences preferences = Preferences();
 String userID;
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); //ensuring weather the app is being initialized or not
+  WidgetsFlutterBinding
+      .ensureInitialized(); //ensuring weather the app is being initialized or not
+  await initHiveForFlutter();
+  await Hive.openBox('query');
+  await Hive.openBox('auth');
   userID = await preferences.getUserId(); //getting user id
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])  //setting the orientation according to the screen it is running on
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]) //setting the orientation according to the screen it is running on
       .then((_) {
     runApp(MultiProvider(
       providers: [
@@ -58,7 +66,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         showPerformanceOverlay: false,
         onGenerateRoute: (RouteSettings settings) {
-          print('build route for ${settings.name}'); //here we are building the routes for the app
+          print(
+              'build route for ${settings.name}'); //here we are building the routes for the app
           var routes = <String, WidgetBuilder>{
             UIData.homeRoute: (BuildContext context) => HomePage(),
             UIData.loginPageRoute: (BuildContext context) => UrlPage(),
@@ -73,7 +82,9 @@ class MyApp extends StatelessWidget {
           WidgetBuilder builder = routes[settings.name];
           return MaterialPageRoute(builder: (ctx) => builder(ctx));
         },
-        home: userID == null ? UrlPage() : HomePage(), //checking weather the user is logged in or not
+        home: userID == null
+            ? UrlPage()
+            : HomePage(), //checking weather the user is logged in or not
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:talawa/services/preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class GraphQLConfiguration with ChangeNotifier {
     final url = await _pref.getOrgUrl();
     orgURI = url;
     httpLink = HttpLink(
-      uri: "${orgURI}graphql",
+      "${orgURI}graphql",
     );
     final imgUrl = await _pref.getOrgImgUrl();
     displayImgRoute = imgUrl;
@@ -29,7 +30,7 @@ class GraphQLConfiguration with ChangeNotifier {
   }
 
   static HttpLink httpLink = HttpLink(
-    uri: "${orgURI}graphql",
+    "${orgURI}graphql",
   );
 
   static AuthLink authLink = AuthLink(
@@ -40,7 +41,7 @@ class GraphQLConfiguration with ChangeNotifier {
 
   GraphQLClient clientToQuery() {
     return GraphQLClient(
-      cache: InMemoryCache(),
+      cache: GraphQLCache(store: HiveStore(Hive.box('query'))),
       link: httpLink,
     );
   }
@@ -48,7 +49,7 @@ class GraphQLConfiguration with ChangeNotifier {
   GraphQLClient authClient() {
     getToken();
     return GraphQLClient(
-      cache: InMemoryCache(),
+      cache: GraphQLCache(store: HiveStore(Hive.box('auth'))),
       link: finalAuthLink,
     );
   }
