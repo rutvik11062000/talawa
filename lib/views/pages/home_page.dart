@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 //importing the pages here
-import 'package:provider/provider.dart';
-import 'package:talawa/utils/GQLClient.dart';
 import 'package:talawa/utils/uidata.dart';
 import 'package:talawa/views/pages/newsfeed/newsfeed.dart';
 import 'package:talawa/views/pages/members/members.dart';
@@ -106,20 +104,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // return MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider<GraphQLConfiguration>(
-    //       create: (_) => GraphQLConfiguration(),
-    //     ),
-    //     ChangeNotifierProvider<Preferences>(
-    //       create: (_) => Preferences(),
-    //     )
-    //   ],
-    //   child: Builder(builder: (BuildContext context) {
-    //     BuildContext rootContext = context;
-    //     Provider.of<GraphQLConfiguration>(rootContext, listen: false)
-    //         .getOrgUrl();
-    //     Provider.of<Preferences>(rootContext, listen: false).getCurrentOrgId();
     return PersistentTabView(context,
         backgroundColor: UIData.primaryColor,
         controller: _controller,
@@ -138,6 +122,4 @@ class _HomePageState extends State<HomePage> {
           duration: Duration(milliseconds: 200),
         ));
   }
-  //   );
-  // }
 }
