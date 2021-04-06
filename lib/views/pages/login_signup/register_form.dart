@@ -23,6 +23,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_password_strength/flutter_password_strength.dart';
 
+import '../_pages.dart';
+
 class RegisterForm extends StatefulWidget {
   @override
   RegisterFormState createState() {
@@ -32,10 +34,13 @@ class RegisterForm extends StatefulWidget {
 
 class RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController firstNameController = new TextEditingController();
-  TextEditingController lastController = new TextEditingController();
-  TextEditingController emailController = new TextEditingController();
-  TextEditingController originalPassword = new TextEditingController();
+  TextEditingController _firstNameController = new TextEditingController();
+  TextEditingController _lastNameController = new TextEditingController();
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _originalPasswordController =
+      new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
   FocusNode confirmPassField = FocusNode();
   RegisterViewModel model = new RegisterViewModel();
   bool _progressBarState = false;
@@ -97,10 +102,12 @@ class RegisterFormState extends State<RegisterForm> {
       final String currentUserId = result.data['signUp']['user']['_id'];
       await _pref.saveUserId(currentUserId);
       //Navigate user to join organization screen
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => new JoinOrganization(
-                fromProfile: false,
-              )));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => JoinOrganization(
+                    fromProfile: false,
+                  )),
+          (route) => false);
     }
   }
 
@@ -135,10 +142,12 @@ class RegisterFormState extends State<RegisterForm> {
       final String currentUserId = result.data['signUp']['user']['_id'];
       await _pref.saveUserId(currentUserId);
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => new JoinOrganization(
-                fromProfile: false,
-              )));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => JoinOrganization(
+                    fromProfile: false,
+                  )),
+          (route) => false);
     }
   }
 
@@ -184,6 +193,7 @@ class RegisterFormState extends State<RegisterForm> {
                         autofillHints: <String>[AutofillHints.givenName],
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
+                        controller: _firstNameController,
                         validator: (value) =>
                             Validator.validateFirstName(value),
                         textAlign: TextAlign.left,
@@ -215,7 +225,8 @@ class RegisterFormState extends State<RegisterForm> {
                         autofillHints: <String>[AutofillHints.familyName],
                         textInputAction: TextInputAction.next,
                         textCapitalization: TextCapitalization.words,
-                        validator: (value) => Validator.validateLastName(value),
+                        controller: _lastNameController,
+                        validator: Validator.validateLastName,
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
@@ -245,8 +256,8 @@ class RegisterFormState extends State<RegisterForm> {
                         autofillHints: <String>[AutofillHints.email],
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.emailAddress,
-                        validator: (value) => Validator.validateEmail(value),
-                        controller: emailController,
+                        validator: Validator.validateEmail,
+                        controller: _emailController,
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
@@ -276,8 +287,8 @@ class RegisterFormState extends State<RegisterForm> {
                         autofillHints: <String>[AutofillHints.password],
                         textInputAction: TextInputAction.next,
                         obscureText: _obscureText,
-                        controller: originalPassword,
-                        validator: (value) => Validator.validatePassword(value),
+                        controller: _originalPasswordController,
+                        validator: Validator.validatePassword,
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
@@ -317,17 +328,21 @@ class RegisterFormState extends State<RegisterForm> {
                           model.password = value;
                         },
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       FlutterPwValidator(
-                          width: 400,
-                          height: 150,
-                          minLength: 8,
-                          uppercaseCharCount: 1,
-                          specialCharCount: 1,
-                          numericCharCount: 1,
-                          onSuccess: (_) {
-                            setState(() {});
-                          },
-                          controller: originalPassword),
+                        width: 400,
+                        height: 150,
+                        minLength: 8,
+                        uppercaseCharCount: 1,
+                        specialCharCount: 1,
+                        numericCharCount: 1,
+                        onSuccess: (_) {
+                          setState(() {});
+                        },
+                        controller: _originalPasswordController,
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -336,7 +351,9 @@ class RegisterFormState extends State<RegisterForm> {
                         obscureText: true,
                         focusNode: confirmPassField,
                         validator: (value) => Validator.validatePasswordConfirm(
-                            originalPassword.text, value),
+                          _originalPasswordController.text,
+                          value,
+                        ),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(

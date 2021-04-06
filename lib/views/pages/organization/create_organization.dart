@@ -401,7 +401,9 @@ class _CreateOrganizationState extends State<CreateOrganization> {
                                   "CREATE ORGANIZATION",
                                   style: TextStyle(color: Colors.white),
                                 ),
-                          onPressed: () async {
+                          onPressed: _progressBarState?(){
+                            _exceptionToast('Request in Progress');
+                          }:() async {
                             if (_formKey.currentState.validate() &&
                                 radioValue >= 0 &&
                                 radioValue1 >= 0) {
@@ -541,7 +543,7 @@ class _CreateOrganizationState extends State<CreateOrganization> {
     fToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 3),
+      toastDuration: Duration(seconds: 1),
     );
   }
 }

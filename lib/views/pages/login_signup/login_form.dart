@@ -16,6 +16,8 @@ import 'package:talawa/model/token.dart';
 import 'package:talawa/views/pages/home_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../_pages.dart';
+
 class LoginForm extends StatefulWidget {
   @override
   LoginFormState createState() {
@@ -24,10 +26,9 @@ class LoginForm extends StatefulWidget {
 }
 
 class LoginFormState extends State<LoginForm> {
-  final email = TextEditingController();
-  final newPassword = TextEditingController();
-  final repeatNewPassword = TextEditingController();
-  final password = TextEditingController();
+  /// [TextEditingController]'s for email and password.
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   LoginViewModel model = new LoginViewModel();
@@ -63,15 +64,15 @@ class LoginFormState extends State<LoginForm> {
       setState(() {
         _progressBarState = false;
       });
-      _exceptionToast('Connection Error. Make sure your Internet connection is stable');
-    }
-    else if (result.hasException) {
+      _exceptionToast(
+          'Connection Error. Make sure your Internet connection is stable');
+    } else if (result.hasException) {
       print(result.exception);
       setState(() {
         _progressBarState = false;
       });
 
-      _exceptionToast(result.exception.toString().substring(16,35));
+      _exceptionToast(result.exception.toString().substring(16, 35));
     } else if (!result.hasException && !result.loading) {
       setState(() {
         _progressBarState = true;
@@ -107,9 +108,7 @@ class LoginFormState extends State<LoginForm> {
             result.data['login']['user']['joinedOrganizations'][0]['name'];
         await _pref.saveCurrentOrgName(currentOrgName);
       }
-
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => new HomePage(openPageIndex: 0,)));
+      Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=>HomePage(openPageIndex: 0,)), (route) => false);
     }
   }
 
@@ -131,6 +130,8 @@ class LoginFormState extends State<LoginForm> {
                   autofillHints: <String>[AutofillHints.email],
                   keyboardType: TextInputType.emailAddress,
                   textAlign: TextAlign.left,
+                  controller: _emailController,
+                  validator: Validator.validateEmail,
                   style: TextStyle(color: Colors.white),
                   //Changed text input action to next
                   textInputAction: TextInputAction.next,
@@ -164,6 +165,8 @@ class LoginFormState extends State<LoginForm> {
                   autofillHints: <String>[AutofillHints.password],
                   obscureText: _obscureText,
                   textAlign: TextAlign.left,
+                  controller: _passwordController,
+                  validator: Validator.validatePassword,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
@@ -263,7 +266,11 @@ class LoginFormState extends State<LoginForm> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(child: Text(msg, textAlign: TextAlign.center,)),
+          Expanded(
+              child: Text(
+            msg,
+            textAlign: TextAlign.center,
+          )),
         ],
       ),
     );
@@ -271,9 +278,7 @@ class LoginFormState extends State<LoginForm> {
     fToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
-
       toastDuration: Duration(seconds: 5),
-
     );
   }
 
