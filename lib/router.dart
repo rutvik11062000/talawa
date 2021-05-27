@@ -4,7 +4,7 @@ import 'routing_constants.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case routes.DemoPageViewRoute:
+    case Routes.DemoPageViewRoute:
       return MaterialPageRoute(
           builder: (context) => DemoPageView(
                 key: Key("DemoPage"),
